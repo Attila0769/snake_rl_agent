@@ -1,4 +1,4 @@
-name: C:\Users\thebr\Documents\GitHub\snake_rl_agent\.conda
+name: snake_rl_agent
 channels:
   - defaults
 dependencies:

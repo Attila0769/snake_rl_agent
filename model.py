@@ -10,7 +10,7 @@ class DQN(nn.Module):
         self.linear1 = nn.Linear(input_size, hidden_size)
         self.linear2 = nn.Linear(hidden_size, hidden_size)
         self.linear3 = nn.Linear(hidden_size, output_size)
-
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     def forward(self, x):
         x = F.relu(self.linear1(x))
         x = F.relu(self.linear2(x))
@@ -25,9 +25,11 @@ class DQN(nn.Module):
         torch.save(self.state_dict(), file_name)
     def load(self, file_name="model.pth"):
         folder_path = "./model"
-        file_path = os.path.join(folder_path, file_name)
-        self.load_state_dict(torch.load(file_path))
-        self.eval()
+        path = os.path.join(folder_path, file_name)
+        if os.path.exists(path):
+            state_dict = torch.load(path, map_location=self.device)
+            self.load_state_dict(state_dict)
+            self.to(self.device)
 
 
 class QTrainer:
@@ -37,12 +39,12 @@ class QTrainer:
         self.model = model
         self.optimizer = optim.Adam(model.parameters(), lr=self.lr)
         self.criterion = nn.MSELoss()
-
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     def train_step(self, state, action, reward, next_state, done):
-        state = torch.tensor(state, dtype=torch.float)
-        next_state = torch.tensor(next_state, dtype=torch.float)
-        action = torch.tensor(action, dtype=torch.long)
-        reward = torch.tensor(reward, dtype=torch.float)
+        state = torch.tensor(state, dtype=torch.float).to(self.device)
+        next_state = torch.tensor(next_state, dtype=torch.float).to(self.device)
+        action = torch.tensor(action, dtype=torch.long).to(self.device)
+        reward = torch.tensor(reward, dtype=torch.float).to(self.device)
 
         # Si une seule transition, ajouter dimension batch
         if len(state.shape) == 1:

@@ -18,6 +18,8 @@ class Agent:
         self.memory = deque(maxlen=MAX_MEMORY)
         self.model = DQN(11, 256, 3)
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.model.to(self.device)
 
     def get_state(self, game, snake):
         """Construit le vecteur d'état de 11 features"""

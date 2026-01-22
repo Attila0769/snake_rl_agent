@@ -49,7 +49,7 @@ class Snake:
         
         self.displace()
 
-        reward = 0
+        reward = -0.1
         done = False
         
 

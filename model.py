@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 import os
+import numpy as np 
 
 class DQN(nn.Module):
     def __init__(self, input_size=11, hidden_size=256, output_size=3):
@@ -41,10 +42,11 @@ class QTrainer:
         self.criterion = nn.MSELoss()
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     def train_step(self, state, action, reward, next_state, done):
-        state = torch.tensor(state, dtype=torch.float).to(self.device)
-        next_state = torch.tensor(next_state, dtype=torch.float).to(self.device)
-        action = torch.tensor(action, dtype=torch.long).to(self.device)
-        reward = torch.tensor(reward, dtype=torch.float).to(self.device)
+        state = torch.tensor(np.array(state, dtype=np.float32), dtype=torch.float32).to(self.device)
+        next_state = torch.tensor(np.array(next_state, dtype=np.float32), dtype=torch.float32).to(self.device)
+        action = torch.tensor(np.array(action, dtype=np.int64), dtype=torch.long).to(self.device)
+        reward = torch.tensor(np.array(reward, dtype=np.float32), dtype=torch.float32).to(self.device)
+
 
         # Si une seule transition, ajouter dimension batch
         if len(state.shape) == 1:

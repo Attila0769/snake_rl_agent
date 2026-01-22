@@ -7,7 +7,7 @@ import os
 import json
 
 MAX_MEMORY = 100_000
-BATCH_SIZE = 1000
+BATCH_SIZE = 10000
 LR = 0.001
 
 class Agent:

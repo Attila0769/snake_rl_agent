@@ -37,7 +37,7 @@ class Snake:
         self.__x_velocity = 0
         self.__y_velocity = -5
         self.__score = 0
-        self.__food_x, self.__food_y = self.spawn(game)
+        self.__food_x , self.__food_y = self.spawn(game)
         self.__last_action = [-1]
     def play_step_rl(self, action,game):
         if isinstance(action, list) or isinstance(action, np.ndarray):
@@ -49,22 +49,26 @@ class Snake:
         
         self.displace()
 
-        reward = -0.1
+        reward = 0
         done = False
+        
         
 
         if self.collision() or self.tail_collision():
             done = True
-            reward = -200 
+            reward = -20 
             return reward, done, self.__score
             
 
-        if self.food_collision(self.__food_x, self.__food_y):
+        elif self.food_collision(self.__food_x, self.__food_y):
             self.grow()
-            self.__food_x, self.__food_y = self.spawn(game)
-            reward = 10 
+            if self.__length == self.__width * self.__height :
+                reward = 5000
+            else :
+                self.__food_x, self.__food_y = self.spawn(game)
+                reward = 10 
         else:
-            reward = 0 
+            reward = -0.01
         return reward, done, self.__score
 
     def displace(self):
@@ -169,10 +173,13 @@ class Snake:
                 return True
         return False
 
-    def spawn(self,game):
-        food_x = np.random.randint(0, game.get_width() // self.get_block_size()) * self.get_block_size()
-        food_y = np.random.randint(0, game.get_height() // self.get_block_size()) * self.get_block_size()
-        return food_x, food_y
+    def spawn(self, game):
+        while True:
+            food_x = np.random.randint(0, game.get_width() // self.get_block_size()) * self.get_block_size()
+            food_y = np.random.randint(0, game.get_height() // self.get_block_size()) * self.get_block_size()
+            if (food_x, food_y) not in self._Snake__position_history:
+                return food_x,food_y
+
     def get_state(self, food_x, food_y):
         return np.array([self.__x - food_x, self.__y - food_y, self.__x_velocity, self.__y_velocity])
     def get_score(self):

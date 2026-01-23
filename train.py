@@ -13,7 +13,7 @@ def train():
     agent = Agent()
     print(list(agent.model.parameters())[0][0][:5])
 
-    game = SnakeGame(400, 400,ticking_speed=0)
+    game = SnakeGame(50, 50,ticking_speed=0)
     snake = Snake(game.get_width(), game.get_height(), 5, game)
     agent.load_training_state()
     agent.model.load()
